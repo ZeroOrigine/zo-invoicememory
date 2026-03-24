@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import PricingTable from '@/components/PricingTable';
 
 export const metadata = {

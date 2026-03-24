@@ -1,5 +1,5 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+export const dynamic = "force-dynamic"
+import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation';
 import { InvoiceDetail } from '@/components/invoices/invoice-detail';
 
@@ -10,7 +10,7 @@ interface InvoicePageProps {
 }
 
 export default async function InvoicePage({ params }: InvoicePageProps) {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClient()
   
   const { data: { user } } = await supabase.auth.getUser();
   

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { SignupForm } from '@/components/auth/signup-form'

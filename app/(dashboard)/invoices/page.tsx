@@ -1,11 +1,11 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+export const dynamic = "force-dynamic"
+import { createClient } from '@/lib/supabase/server'
 import { InvoicesList } from '@/components/invoices/invoices-list';
 import { InvoicesHeader } from '@/components/invoices/invoices-header';
 import { EmptyState } from '@/components/ui/empty-state';
 
 export default async function InvoicesPage() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClient()
   
   const { data: { user } } = await supabase.auth.getUser();
   

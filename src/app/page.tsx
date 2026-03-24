@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import Link from 'next/link';
 import LiveStats from '@/components/LiveStats';
 import RevealObserver from '@/components/RevealObserver';

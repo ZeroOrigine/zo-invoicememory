@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import { Metadata } from 'next'
 import { Navigation } from './components/Navigation'
 import { HeroSection } from './components/HeroSection'

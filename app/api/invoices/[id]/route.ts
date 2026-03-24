@@ -1,5 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -36,7 +35,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -82,7 +81,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -166,7 +165,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
