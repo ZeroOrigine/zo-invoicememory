@@ -1,10 +1,12 @@
-import { type NextRequest, NextResponse } from 'next/server'
+import { type NextRequest } from 'next/server'
+import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  // For MVP: just pass through. Auth will be added when Supabase tables exist.
-  return NextResponse.next()
+  return updateSession(request)
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/invoices/:path*', '/billing/:path*', '/settings/:path*'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|api/webhooks|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map|txt|xml)$).*)',
+  ],
 }
