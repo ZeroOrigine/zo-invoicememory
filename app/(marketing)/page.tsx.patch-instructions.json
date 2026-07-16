@@ -1,0 +1,27 @@
+{
+  "file": "app/(marketing)/page.tsx",
+  "operation": "string-replace (exact, one occurrence each)",
+  "replacements": [
+    {
+      "find": "From \\u201csent\\u201d to \\u201cpaid\\u201d — on autopilot.",
+      "replace": "From “sent” to “paid” — on autopilot."
+    },
+    {
+      "find": "The free plan isn\\u2019t a teaser — it\\u2019s the full memory engine for lighter invoice volume. Upgrade only when",
+      "replace": "The free plan isn’t a teaser — it’s the full memory engine for lighter invoice volume. Upgrade only when"
+    },
+    {
+      "find": "From solo freelancers to agency finance teams — here\\u2019s what happens when invoices remember themselves.",
+      "replace": "From solo freelancers to agency finance teams — here’s what happens when invoices remember themselves."
+    },
+    {
+      "find": "\\u201c{t.quote}\\u201d",
+      "replace": "“{t.quote}”"
+    },
+    {
+      "find": "— for people who\\u2019d rather do the work than chase the money.",
+      "replace": "— for people who’d rather do the work than chase the money."
+    }
+  ],
+  "verification": "After applying, `grep -n '\\\\u20' app/(marketing)/page.tsx` must return matches ONLY inside single-quoted JS string literals (data constants), never in JSX text between > and <. Then render / and confirm no literal backslash sequences are visible in the how-it-works heading, pricing intro, testimonials, or footer."
+}
