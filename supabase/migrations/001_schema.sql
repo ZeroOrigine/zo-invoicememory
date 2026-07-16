@@ -7,7 +7,7 @@
 --
 -- Design decisions (delete-first):
 --   * No `plans` table — plan is an enum with per-user free provisioning
---     via handle_new_user(). No `invoice_items` table — line items are JSONB
+--     via handle_new_user_invoicememory(). No `invoice_items` table — line items are JSONB
 --     (no cross-invoice relational queries needed in v1; GIN index covers
 --     "remember my line items" suggestions).
 --   * Money is ALWAYS integer cents (bigint). Never floats in finance.
@@ -82,7 +82,7 @@ create table public.invoicememory_profiles (
 );
 
 comment on table public.invoicememory_profiles is
-  'One row per auth.users row, auto-created by handle_new_user(). Holds business defaults that pre-fill every new invoice.';
+  'One row per auth.users row, auto-created by handle_new_user_invoicememory(). Holds business defaults that pre-fill every new invoice.';
 comment on column public.invoicememory_profiles.invoice_seq is
   'Last used invoice sequence number for this user. Only mutated by handle_invoice_insert().';
 
@@ -289,10 +289,10 @@ end;
 $$;
 
 -- ----------------------------------------------------------------------------
--- 5.3 handle_new_user() — auto-provision profile + free plan at signup.
+-- 5.3 handle_new_user_invoicememory() — auto-provision profile + free plan at signup.
 --     Idempotent: safe if auth retries the insert.
 -- ----------------------------------------------------------------------------
-create or replace function public.handle_new_user()
+create or replace function public.handle_new_user_invoicememory()
 returns trigger
 language plpgsql
 security definer
@@ -420,9 +420,9 @@ $$;
 -- ============================================================================
 
 -- Signup provisioning
-create trigger on_auth_user_created
+create trigger on_auth_user_created_invoicememory
   after insert on auth.users
-  for each row execute function public.handle_new_user();
+  for each row execute function public.handle_new_user_invoicememory();
 
 -- Invoice domain logic
 create trigger trg_invoices_before_insert
@@ -468,7 +468,7 @@ alter table public.invoicememory_payments      enable row level security;
 
 -- ----------------------------------------------------------------------------
 -- invoicememory_profiles: read/update own row; admins read all.
--- No INSERT/DELETE policies — rows are managed by handle_new_user() + auth cascade.
+-- No INSERT/DELETE policies — rows are managed by handle_new_user_invoicememory() + auth cascade.
 -- ----------------------------------------------------------------------------
 create policy "profiles_select_own"
   on public.invoicememory_profiles for select
@@ -567,7 +567,7 @@ create policy "payments_admin_select_all"
 -- ============================================================================
 -- No lookup tables exist in v1 (delete-first): plans and statuses are enums,
 -- so there are no static reference rows to INSERT in a fresh project.
--- The default "free" plan is seeded PER USER by handle_new_user(), which
+-- The default "free" plan is seeded PER USER by handle_new_user_invoicememory(), which
 -- inserts `invoicememory_subscriptions (plan='free', status='active')` at signup — every
 -- account starts free with zero application code.
 --
