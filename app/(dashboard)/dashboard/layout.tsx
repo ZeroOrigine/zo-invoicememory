@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation';
-import { Sidebar } from '@/components/dashboard/sidebar';
+import Sidebar from '@/components/dashboard/sidebar';
 import { Header } from '@/components/dashboard/header';
 import { Toaster } from '@/components/ui/toaster';
 
