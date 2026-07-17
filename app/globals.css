@@ -1,3 +1,149 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================================================
+   FINAL CANONICAL MERGED STYLESHEET (validation re-assert + touch-target rule).
+   Carries: auth/billing component classes (.btn-primary, .field-input, …),
+   the landing animation system, reduced-motion support, and a coarse-pointer
+   rule guaranteeing 44px minimum tap targets across the app.
+   ============================================================================ */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold tracking-tight;
+  }
+  img, video, svg {
+    @apply h-auto max-w-full;
+  }
+  ::selection {
+    @apply bg-brand-600/20;
+  }
+}
+
+/* ------------------------ Auth & billing components ------------------------ */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-brand-600 px-6 py-3
+           text-sm font-semibold text-white shadow-sm transition-all
+           hover:bg-brand-700 active:scale-[0.98] focus-visible:outline focus-visible:outline-2
+           focus-visible:outline-offset-2 focus-visible:outline-brand-600
+           disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-gray-300
+           bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-sm
+           transition-all hover:bg-gray-50 active:scale-[0.98]
+           disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100;
+  }
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-gray-700;
+  }
+  .field-input {
+    @apply block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 shadow-sm
+           transition-colors placeholder:text-gray-400
+           focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+  }
+  .field-error {
+    @apply mt-1.5 text-sm text-danger-700;
+  }
+  .alert-error {
+    @apply rounded-lg border border-danger-100 bg-danger-50 px-4 py-3 text-sm text-danger-700;
+  }
+}
+
+/* -------------------------- Shared keyframes -------------------------- */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.55); }
+  75% { transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Auth micro-delight helpers */
+.animate-fade-up { animation: fade-up 0.35s ease-out both; }
+.animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.skeleton-shimmer {
+  border-radius: 0.5rem;
+  background-color: #f3f4f6;
+  background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+/* -------- Landing scroll reveal (JS-gated: fully visible without JS) -------- */
+.js-reveal [data-animate] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.js-reveal [data-animate].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Landing hero + demo timeline */
+.hero-item {
+  opacity: 0;
+  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.demo-item {
+  opacity: 0;
+  animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.demo-paid {
+  opacity: 0;
+  animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ----- Touch targets: 44px minimum for interactive controls on touch ----- */
+@media (pointer: coarse) {
+  button,
+  [role='button'],
+  input[type='submit'],
+  input[type='button'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ------------------------- Respect reduced motion ------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero-item, .demo-item, .demo-paid,
+  .animate-fade-up, .animate-pop-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .pulse-dot, .skeleton-shimmer { animation: none; }
+  .js-reveal [data-animate] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
