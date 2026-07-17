@@ -6,6 +6,7 @@
 //   GET  /api/clients?page=&limit=&search=&include_archived=  → paginated list
 //   POST /api/clients                                          → save a client
 
+import { rateLimitGuard } from '@/lib/rate-limit';
 import type { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAuthenticatedContext } from '@/lib/supabase/server';
@@ -155,6 +156,9 @@ export async function GET(request: Request): Promise<NextResponse> {
 // ── POST /api/clients ────────────────────────────────────────────────────
 
 export async function POST(request: Request): Promise<NextResponse> {
+  // durable shared rate limit (deploy scorecard requirement — write-surface hygiene)
+  const limited = await rateLimitGuard(request, 'invoicememory_write');
+  if (limited) return limited;
   try {
     const context = await getAuthenticatedContext();
     if (!context) {

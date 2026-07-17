@@ -16,6 +16,7 @@ import type { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAuthenticatedContext } from '@/lib/supabase/server';
 import { jsonData, jsonError, jsonValidationError, readJsonBody } from '@/lib/api';
+import { rateLimitGuard } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -115,6 +116,9 @@ export async function GET(): Promise<NextResponse> {
 // ── PATCH /api/profile ───────────────────────────────────────────────────
 
 export async function PATCH(request: Request): Promise<NextResponse> {
+  // durable shared rate limit (deploy scorecard requirement — write-surface hygiene)
+  const limited = await rateLimitGuard(request, 'invoicememory_write');
+  if (limited) return limited;
   try {
     const context = await getAuthenticatedContext();
     if (!context) {

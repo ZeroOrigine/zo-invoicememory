@@ -13,6 +13,7 @@ import type { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAuthenticatedContext } from '@/lib/supabase/server';
 import { isUuid, jsonData, jsonError, jsonValidationError, readJsonBody } from '@/lib/api';
+import { rateLimitGuard } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
@@ -238,6 +239,9 @@ export async function GET(request: Request, { params }: RouteContext): Promise<N
 // ── PATCH /api/invoices/:id ──────────────────────────────────────────────
 
 export async function PATCH(request: Request, { params }: RouteContext): Promise<NextResponse> {
+  // durable shared rate limit (deploy scorecard requirement — write-surface hygiene)
+  const limited = await rateLimitGuard(request, 'invoicememory_write');
+  if (limited) return limited;
   try {
     if (!isUuid(params.id)) {
       return jsonError(INVALID_REFERENCE_MESSAGE, 'VALIDATION_ERROR', 400);
@@ -337,6 +341,9 @@ export async function PATCH(request: Request, { params }: RouteContext): Promise
 // ── DELETE /api/invoices/:id ─────────────────────────────────────────────
 
 export async function DELETE(request: Request, { params }: RouteContext): Promise<NextResponse> {
+  // durable shared rate limit (deploy scorecard requirement — write-surface hygiene)
+  const limited = await rateLimitGuard(request, 'invoicememory_write');
+  if (limited) return limited;
   try {
     if (!isUuid(params.id)) {
       return jsonError(INVALID_REFERENCE_MESSAGE, 'VALIDATION_ERROR', 400);

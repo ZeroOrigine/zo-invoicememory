@@ -10,10 +10,14 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createBillingPortalSession } from '@/lib/stripe/portal'
 import { jsonError } from '@/lib/api'
+import { rateLimitGuard } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic'
 
-export async function POST(): Promise<NextResponse> {
+export async function POST(request: Request): Promise<NextResponse> {
+  // durable shared rate limit (deploy scorecard requirement — write-surface hygiene)
+  const limited = await rateLimitGuard(request, 'invoicememory_billing');
+  if (limited) return limited;
   try {
     const supabase = createClient()
     const {

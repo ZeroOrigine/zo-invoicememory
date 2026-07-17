@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createCheckoutSession, getPriceId } from '@/lib/stripe/checkout'
+import { rateLimitGuard } from '@/lib/rate-limit';
 
 // ---------------------------------------------------------------------------
 // POST /api/checkout — { plan: 'pro' | 'business', interval: 'monthly' | 'yearly' }
@@ -16,6 +17,9 @@ import { createCheckoutSession, getPriceId } from '@/lib/stripe/checkout'
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
+  // durable shared rate limit (deploy scorecard requirement — write-surface hygiene)
+  const limited = await rateLimitGuard(request, 'invoicememory_billing');
+  if (limited) return limited;
   try {
     const supabase = createClient()
     const {

@@ -11,6 +11,7 @@ import { jsonData } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
 
+// rate-limit-exempt: session-required, idempotent, free — signout can only clear the caller's own session
 export async function POST(request: Request): Promise<NextResponse> {
   const requestUrl = new URL(request.url);
 
