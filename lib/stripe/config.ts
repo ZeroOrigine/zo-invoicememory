@@ -66,24 +66,9 @@ export const PLANS: Record<PlanId, Plan> = {
       'Priority support',
     ],
   },
-  business: {
-    id: 'business',
-    name: 'Business',
-    tagline: 'For teams and agencies',
-    highlight: false,
-    prices: { monthly: 9900, yearly: 99000 }, // $99/mo or $990/yr (2 months free)
-    limits: { invoicesPerMonth: null, clients: null },
-    features: [
-      'Everything in Pro, plus:',
-      'API access for custom integrations',
-      'Dedicated onboarding',
-      'Priority phone + email support',
-      '99.9% uptime SLA',
-    ],
-  },
 }
 
-export const PLAN_ORDER: PlanId[] = ['free', 'pro', 'business']
+export const PLAN_ORDER: PlanId[] = ['free', 'pro']
 
 export const YEARLY_MONTHS_FREE = 2
 
