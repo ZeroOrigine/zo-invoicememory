@@ -151,24 +151,6 @@ const TIERS = [
       'Priority support',
     ],
   },
-  {
-    name: 'Business',
-    tagline: 'For teams and agencies with serious volume.',
-    monthly: 99,
-    annual: 82,
-    annualBill: 'Billed $990/year — 2 months free',
-    cta: 'Get Business',
-    href: '/signup?plan=business',
-    highlight: false,
-    note: 'Questions first? hello@zeroorigine.com — a human replies.',
-    features: [
-      'Everything in Pro, plus:',
-      'API access for custom integrations',
-      'Dedicated onboarding',
-      'Priority phone + email support',
-      '99.9% uptime SLA',
-    ],
-  },
 ]
 
 const FAQS = [
@@ -658,7 +640,7 @@ export default function LandingPage() {
               {annual ? 'Nice — two months free, every year.' : ''}
             </p>
 
-            <div className="mt-10 grid items-stretch gap-8 lg:grid-cols-3">
+            <div className="mt-10 grid items-stretch gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
               {TIERS.map((t, i) => (
                 <div
                   key={t.name}
