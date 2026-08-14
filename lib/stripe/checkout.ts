@@ -56,7 +56,7 @@ export async function getOrCreateStripeCustomer(userId: string, email?: string):
   const stripe = getStripe()
   const customer = await stripe.customers.create({
     email,
-    metadata: { supabase_user_id: userId, user_id: userId },
+    metadata: { product: 'invoicememory', supabase_user_id: userId, user_id: userId },
   })
 
   const { error: writeError } = await admin

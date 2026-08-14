@@ -35,6 +35,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
+
+  // SHARED-ACCOUNT FILTER: this Stripe account carries EVERY product plus
+  // donations. Only checkout sessions this product stamped (metadata.product;
+  // legacy: (!!_md['supabase_user_id'] || !!_md['user_id'])) are ours — anything else is acknowledged (200) and
+  // IGNORED. Captured incident: donation cs_live_a1sQUqDE was wrongly
+  // fulfilled by a foreign handler.
+  if (event.type.startsWith('checkout.session.')) {
+    const _md = ((event.data.object as { metadata?: Record<string, string> | null })?.metadata) ?? {}
+    const _ours = _md['product'] === 'invoicememory' || (!_md['product'] && (!!_md['supabase_user_id'] || !!_md['user_id']))
+    if (!_ours) {
+      return NextResponse.json({ received: true, ignored: 'foreign_session' })
+    }
+  }
+
   try {
     await handleStripeEvent(event)
   } catch (err) {
