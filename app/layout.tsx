@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
+import ZoAuthFragmentBridge from '@/components/ZoAuthFragmentBridge'
 
 /*
   InvoiceMemory — Root Layout (HONESTY PATCH, validation pass 4).
@@ -80,7 +81,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${bodyFont.variable} ${displayFont.variable}`}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <ZoAuthFragmentBridge />{children}</body>
     </html>
   )
 }
