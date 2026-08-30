@@ -74,7 +74,8 @@ export function SignupForm() {
       return
     }
 
-    // Email confirmation disabled in this environment → straight to the dashboard.
+    // #4509: auth auto-confirms fleet-wide, so a NEW signup returns a live
+    // session. The honest next step is the dashboard, not a mailbox.
     if (data.session) {
       router.push('/dashboard')
       router.refresh()
@@ -89,20 +90,23 @@ export function SignupForm() {
     return (
       <div className="animate-fade-up text-center" role="status">
         <div className="animate-pop-in mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success-50">
-          <svg className="h-7 w-7 text-success-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          <svg className="h-7 w-7 text-success-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1.001.43-1.563A6 6 0 1121.75 8.25z" />
           </svg>
         </div>
-        <h2 className="mt-5 text-xl text-gray-900">Check your inbox</h2>
+        <h2 className="mt-5 text-xl text-gray-900">You can sign in now</h2>
         <p className="mt-2 text-sm text-gray-600">
-          We sent a confirmation link to <span className="font-semibold text-gray-900">{sentTo}</span>. Click it and you&apos;ll land in your dashboard, ready to send your first invoice.
+          If <span className="font-semibold text-gray-900">{sentTo}</span> can be used for an InvoiceMemory account, it is ready: sign in with the password you just chose. If it already had an account, sign in with that account&apos;s existing password, or reset it.
         </p>
+        <Link href="/login" className="btn-primary mt-5 w-full">
+          Sign in
+        </Link>
         <button
           type="button"
           onClick={() => setSentTo(null)}
-          className="mt-5 text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
+          className="mt-4 text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
         >
-          Wrong address? Go back
+          Used a different email? Go back
         </button>
       </div>
     )
